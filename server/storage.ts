@@ -19,7 +19,10 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
 import { eq } from "drizzle-orm";
 
-const sqlite = new Database("data.db");
+// On Vercel's serverless runtime the project directory is read-only; only /tmp is writable.
+// Data will reset on cold starts there — acceptable for a demo deployment.
+const dbPath = process.env.VERCEL ? "/tmp/data.db" : "data.db";
+const sqlite = new Database(dbPath);
 sqlite.pragma("journal_mode = WAL");
 
 export const db = drizzle(sqlite);
